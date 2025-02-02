@@ -1,36 +1,37 @@
 ﻿@model IEnumerable<ProductHub.Models.Product>
 
-@{
-    ViewBag.Title = "Index";
-    int pageNumber = ViewBag.PageNumber ?? 1;
-    int pageSize = 10;
-    int totalRecords = ViewBag.TotalRecords ?? 0;
-    int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
-}
+    @{
+        ViewBag.Title = "Index";
+        int pageNumber = ViewBag.PageNumber ?? 1;
+        int pageSize = 10;
+        int totalRecords = ViewBag.TotalRecords ?? 0;
+        int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+    }
 
-<h2>Product List</h2>
+     <h2>Product List</h2>
 
-<table class="table">
-    <tr>
-        <th>ProductId</th>
-        <th>ProductName</th>
-        <th>CategoryId</th>
-        <th>CategoryName</th>
-    </tr>
-    @foreach (var item in Model)
-    {
+    <table class="table">
         <tr>
-            <td>@item.ProductId</td>
-            <td>@item.ProductName</td>
-            <td>@item.CategoryId</td>
-            <td>@item.Category.CategoryName</td>
+            <th>ProductId</th>
+            <th>ProductName</th>
+            <th>CategoryId</th>
+            <th>CategoryName</th>
         </tr>
-    }
-</table>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductId</td>
+                <td>@item.ProductName</td>
+                <td>@item.CategoryId</td>
+                <td>@item.Category.CategoryName</td>
+            </tr>
+        }
+    </table>
 
-<div>
-    @for (int i = 1; i <= totalPages; i++)
-    {
-        <a href="@Url.Action("Index", new { page = i })">@i</a>
-    }
-</div>
+    <div>
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            <a href="@Url.Action("Index", new { page = i })">@i</a>
+        }
+    </div>
+

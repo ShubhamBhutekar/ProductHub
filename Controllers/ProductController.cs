@@ -1,7 +1,9 @@
 ﻿using ProductHub.Models;
+using ProductHub.Services;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -12,9 +14,18 @@ namespace ProductHub.Controllers
     {
         private ProductHubDbContext db = new ProductHubDbContext();
 
+        private readonly IProductService _productService;
+
+        public ProductController(IProductService productService)
+        {
+            _productService = productService;
+        }
+
+
         // GET: Product
         public ActionResult Index(int? page)
         {
+            var products1 = _productService.GetAllProducts();
             int pageSize = 10;
             int pageNumber = (page ?? 1);
             var products = db.Products.Include(p => p.Category)
@@ -27,6 +38,11 @@ namespace ProductHub.Controllers
             return View(products);
         }
 
+        private bool IsProductNameDuplicate(string productName, int? productId = null)
+        {
+            return db.Products.Any(p => p.ProductName == productName && p.ProductId != productId);
+        }
+
         // GET: Product/Create
         public ActionResult Create()
         {
@@ -37,12 +53,26 @@ namespace ProductHub.Controllers
         // POST: Product/Create
         [HttpPost]
         public ActionResult Create(Product product)
+
         {
+            if (IsProductNameDuplicate(product.ProductName))
+            {
+                ModelState.AddModelError("ProductName", "A product with the same name already exists.");
+            }
             if (ModelState.IsValid)
             {
-                db.Products.Add(product);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    db.Products.Add(product);
+                    db.SaveChanges();
+                    _productService.AddProduct(product);
+                    return RedirectToAction("Index");
+                }
+                catch (DbUpdateException ex)
+                {
+                    Console.WriteLine("Database Update Error: " + ex.InnerException?.Message);
+                    ModelState.AddModelError("", "An error occurred while saving the product.");
+                }
             }
             ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "CategoryName", product.CategoryId);
             return View(product);
@@ -60,11 +90,23 @@ namespace ProductHub.Controllers
         [HttpPost]
         public ActionResult Edit(Product product)
         {
+            if (IsProductNameDuplicate(product.ProductName, product.ProductId))
+            {
+                ModelState.AddModelError("Name", "A product with the same name already exists.");
+            }
             if (ModelState.IsValid)
             {
-                db.Entry(product).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                try
+                {
+                    db.Entry(product).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+                catch (DbUpdateException ex)
+                {
+                    Console.WriteLine("Database Update Error: " + ex.InnerException?.Message);
+                    ModelState.AddModelError("", "An error occurred while updating the product.");
+                }
             }
             ViewBag.CategoryId = new SelectList(db.Categories, "CategoryId", "CategoryName", product.CategoryId);
             return View(product);
@@ -81,9 +123,18 @@ namespace ProductHub.Controllers
         [HttpPost, ActionName("Delete")]
         public ActionResult DeleteConfirmed(int id)
         {
-            var product = db.Products.Find(id);
-            db.Products.Remove(product);
-            db.SaveChanges();
+            try
+            {
+                var product = db.Products.Find(id);
+                db.Products.Remove(product);
+                db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            catch (DbUpdateException ex)
+            {
+                Console.WriteLine("Database Update Error: " + ex.InnerException?.Message);
+                ModelState.AddModelError("", "An error occurred while deleting the product.");
+            }
             return RedirectToAction("Index");
         }
     }

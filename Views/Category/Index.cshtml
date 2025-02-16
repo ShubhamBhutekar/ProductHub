@@ -1,7 +1,11 @@
 ﻿@model IEnumerable<ProductHub.Models.Category>
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Categories";
+    int pageNumber = ViewBag.PageNumber ?? 1; // Default to page 1 if not specified
+    int pageSize = 10; // Number of items per page
+    int totalRecords = ViewBag.TotalRecords ?? 0; // Total number of records
+    int totalPages = (int)Math.Ceiling((double)totalRecords / pageSize); // Total number of pages
 }
 
 <h2>Index</h2>
@@ -17,17 +21,26 @@
         <th></th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.CategoryName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.CategoryId }) |
-            @Html.ActionLink("Details", "Details", new { id=item.CategoryId }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.CategoryId })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.CategoryName)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.CategoryId }) |
+           
+                @Html.ActionLink("Delete", "Delete", new { id = item.CategoryId })
+            </td>
+        </tr>
+    }
 
 </table>
+<!-- Pagination Controls -->
+<div>
+    @for (int i = 1; i <= totalPages; i++)
+    {
+        <a href="@Url.Action("Index", new { page = i })" class="btn btn-default @(i == pageNumber ? "active" : "")">@i</a>
+    }
+</div>
+

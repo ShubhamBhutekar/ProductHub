@@ -83,3 +83,10 @@ C:\Users\shubham\Documents\MVC Project\ProductHub\obj\Debug\ProductHub.dll
 C:\Users\shubham\Documents\MVC Project\ProductHub\obj\Debug\ProductHub.pdb
 C:\Users\shubham\Documents\MVC Project\ProductHub\obj\Debug\ProductHub.Migrations.InitialCreate.resources
 C:\Users\shubham\Documents\MVC Project\ProductHub\obj\Debug\ProductHub.csproj.GenerateResource.cache
+C:\Users\shubham\Documents\MVC Project\ProductHub\bin\System.Runtime.CompilerServices.Unsafe.dll
+C:\Users\shubham\Documents\MVC Project\ProductHub\bin\Unity.Abstractions.dll
+C:\Users\shubham\Documents\MVC Project\ProductHub\bin\Unity.Container.dll
+C:\Users\shubham\Documents\MVC Project\ProductHub\bin\Unity.Mvc5.dll
+C:\Users\shubham\Documents\MVC Project\ProductHub\bin\System.Runtime.CompilerServices.Unsafe.xml
+C:\Users\shubham\Documents\MVC Project\ProductHub\bin\Unity.Abstractions.pdb
+C:\Users\shubham\Documents\MVC Project\ProductHub\bin\Unity.Container.pdb

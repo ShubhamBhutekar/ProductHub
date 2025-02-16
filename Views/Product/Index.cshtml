@@ -31,7 +31,7 @@
     <div>
         @for (int i = 1; i <= totalPages; i++)
         {
-            <a href="@Url.Action("Index", new { page = i })">@i</a>
+            <a href="@Url.Action("Index", new { page = i })" class="btn btn-default @(i == pageNumber ? "active" : "")">@i</a>
         }
     </div>
 

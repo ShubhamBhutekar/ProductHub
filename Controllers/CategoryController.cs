@@ -1,4 +1,5 @@
 ﻿using ProductHub.Models;
+using ProductHub.Services;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -12,26 +13,65 @@ namespace ProductHub.Controllers
     {
         private ProductHubDbContext db = new ProductHubDbContext();
 
-        // GET: Category
-        public ActionResult Index()
+        private readonly ICategoryService _categoryService;
+
+        public CategoryController(ICategoryService categoryService)
         {
-            return View(db.Categories.ToList());
+            _categoryService = categoryService;
         }
+
+        // GET: Category
+        public ActionResult Index(int? page)
+        {
+            var categories1 = _categoryService.GetAllCategories();
+            int pageSize = 5; 
+            int pageNumber = (page ?? 1); 
+
+            
+            int skip = (pageNumber - 1) * pageSize;
+
+          
+            var categories = db.Categories
+                               .OrderBy(c => c.CategoryId) 
+                               .Skip(skip)
+                               .Take(pageSize)
+                               .ToList();
+
+            
+            ViewBag.PageNumber = pageNumber;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalRecords = db.Categories.Count();
+            ViewBag.TotalPages = (int)Math.Ceiling((double)ViewBag.TotalRecords / pageSize);
+
+            return View(categories);
+        }
+
+    
+
+        private bool IsCategoryNameDuplicate(string categoryName, int? categoryId = null)
+        {
+            return db.Categories.Any(c => c.CategoryName == categoryName && c.CategoryId != categoryId);
+        }
+
 
         // GET: Category/Create
         public ActionResult Create()
         {
             return View();
         }
-
         // POST: Category/Create
         [HttpPost]
         public ActionResult Create(Category category)
         {
+            if (IsCategoryNameDuplicate(category.CategoryName))
+            {
+                ModelState.AddModelError("CategoryName", "A category with the same name already exists.");
+            }
             if (ModelState.IsValid)
             {
                 db.Categories.Add(category);
                 db.SaveChanges();
+                _categoryService.AddCategory(category);
                 return RedirectToAction("Index");
             }
             return View(category);
@@ -48,7 +88,11 @@ namespace ProductHub.Controllers
         [HttpPost]
         public ActionResult Edit(Category category)
         {
-            if (ModelState.IsValid)
+            if (IsCategoryNameDuplicate(category.CategoryName, category.CategoryId))
+            {
+                ModelState.AddModelError("CategoryName", "A category with the same name already exists.");
+            }
+                if (ModelState.IsValid)
             {
                 db.Entry(category).State = EntityState.Modified;
                 db.SaveChanges();

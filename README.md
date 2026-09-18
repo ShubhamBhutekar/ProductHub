@@ -19,10 +19,11 @@ ProductHub is a simple project built using **ASP.NET MVC** with **Entity Framewo
 4. **Server-Side Pagination** — the product list must implement pagination on the server side, meaning records should be fetched from the database according to the selected page size, rather than loading all records and paginating on the client.
 
    *Example:* If the page size is 10 and the user navigates to page 9, only records 90–100 should be queried and retrieved from the database.
-1) UER INTERFACE
+   
+## 🖥️ User Interface
    
 ![Screenshot (912)](https://github.com/user-attachments/assets/e34ad3f7-b561-41e8-941c-66a23817f7ac)
 
-2)CODE ENVIRONMENT
+## 💻 Code Environment
 
 ![Screenshot (913)](https://github.com/user-attachments/assets/edb9dfab-fabe-43d3-aa61-055196d5e406)
